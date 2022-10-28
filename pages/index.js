@@ -13,6 +13,8 @@ export async function getStaticProps({ preview }) {
         id
         name
         image {
+          alt
+          title
           responsiveImage(imgixParams: {fm: jpg, fit: crop }) {
             ...responsiveImageFragment
           }

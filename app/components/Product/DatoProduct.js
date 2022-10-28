@@ -1,12 +1,12 @@
-import styles from "./Product.module.css";
-import { Image } from "react-datocms";
+import styles from './Product.module.css';
+import { Image } from 'react-datocms';
 
 export default function DatoProduct(product) {
   const { id, image, name, description, price } = product;
 
   return (
     <div key={id} className={styles.product}>
-      <Image data={image.responsiveImage} />
+      <Image data={image.responsiveImage} alt={image.alt} title={image.title} />
       <h3>{name}</h3>
       <p>{description}</p>
       <span>${price}</span>
