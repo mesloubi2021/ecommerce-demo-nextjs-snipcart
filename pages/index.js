@@ -1,14 +1,57 @@
-import Head from "next/head";
-import Link from "next/Link";
-import styles from "../styles/Home.module.css";
-import products from "../app/assets/products.json";
-import Product from "../app/components/Product/Product";
+import Head from 'next/head';
+import { useQuerySubscription } from 'react-datocms';
+import styles from '../styles/Home.module.css';
+import DatoProduct from '../app/components/Product/DatoProduct';
+import { request } from '../lib/datocms';
+import { responsiveImageFragment } from '../lib/fragments';
 
-export default function Home() {
+export async function getStaticProps({ preview }) {
+  const graphqlRequest = {
+    query: `
+    {
+      products: allProducts {
+        id
+        name
+        image {
+          responsiveImage(imgixParams: {fm: jpg, fit: crop }) {
+            ...responsiveImageFragment
+          }
+        }
+        description
+        slug
+        price
+      }
+    }
+    ${responsiveImageFragment}
+    `,
+    preview,
+  };
+
+  return {
+    props: {
+      subscription: preview
+        ? {
+            ...graphqlRequest,
+            initialData: await request(graphqlRequest),
+            token: process.env.NEXT_PUBLIC_DATOCMS_READONLY_API_KEY,
+          }
+        : {
+            enabled: false,
+            initialData: await request(graphqlRequest),
+          },
+    },
+  };
+}
+
+export default function Home({ subscription }) {
+  const {
+    data: { products },
+  } = useQuerySubscription(subscription);
+
   return (
     <div className={styles.container}>
       <Head>
-        <title>E-commerce</title>
+        <title>Next.js and SnipCart Ecommerce</title>
         <link rel="icon" href="/favicon.ico" />
 
         <link rel="preconnect" href="https://cdn.snipcart.com" />
@@ -23,18 +66,13 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <h1>E-Commerce in Next.js and SnipCart</h1>
+        <h1>Next.js and SnipCart Ecommerce</h1>
 
         <div className={styles.grid}>
           {products.map((product, i) => (
-            <Product {...product} key={i} />
+            <DatoProduct {...product} key={i} />
           ))}
         </div>
-        {process.env.NEXT_PUBLIC_DATOCMS_READONLY_TOKEN && (
-          <Link as="dato" href="/dato">
-            <a className={styles.cta}>See it on Dato ⟶</a>
-          </Link>
-        )}
       </main>
 
       <div
