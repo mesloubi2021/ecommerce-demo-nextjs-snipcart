@@ -79,7 +79,10 @@ export default function Home({ subscription }) {
 
       <div
         id="snipcart"
-        data-api-key={process.env.NEXT_PUBLIC_SNIPCART_API_KEY}
+        data-api-key={
+          process.env.NEXT_PUBLIC_SNIPCART_API_KEY ||
+          'OWE3MmZmMjQtNTk3Yi00OThhLWEwMmUtZDY4ZWM4NzIwYzZiNjM2NjM0Mzc1NzE0MTUwNzI1'
+        }
         hidden
       ></div>
     </div>
